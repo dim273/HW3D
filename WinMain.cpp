@@ -7,6 +7,7 @@ int CALLBACK WinMain(
 	int		  nCmdShow) 
 {
 	Window wnd(800, 300, TEXT("Mew"));
+	Window wed(500, 500, TEXT("Bird"));
 	MSG msg;
 	BOOL gResult;
 	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
