@@ -18,10 +18,13 @@
     <ClInclude Include="BirdWin.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Window.h">
+    <ClInclude Include="BirdExpection.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="BirdExpection.h">
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,5 +38,15 @@
     <ClCompile Include="BirdException.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="HW3D.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>
