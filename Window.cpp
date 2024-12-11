@@ -1,4 +1,5 @@
 #include"Window.h"
+#include<sstream>
 
 Window::WindowClass Window::WindowClass::wndClass;
 
@@ -14,7 +15,7 @@ Window::WindowClass::WindowClass() noexcept :
 	wc.hInstance = GetInstance();
 	wc.hIcon = nullptr;
 	wc.hCursor = nullptr;
-	wc.hbrBackground = nullptr;
+	wc.hbrBackground = CreateSolidBrush(RGB(255, 172, 183));		//设置背景板的颜色
 	wc.lpszMenuName = nullptr;
 	wc.lpszClassName = LPCTSTR(GetName());
 	wc.hIconSm = nullptr;
@@ -26,7 +27,7 @@ Window::WindowClass::~WindowClass()
 	UnregisterClass(LPCTSTR(wndClassName), GetInstance());
 }
 
-const wchar_t* Window::WindowClass::GetName() noexcept
+const char* Window::WindowClass::GetName() noexcept
 {
 	return wndClassName;
 }
@@ -37,7 +38,7 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 }
 
 //Window类的定义
-Window::Window(int width, int height, const wchar_t* name) noexcept
+Window::Window(int width, int height, const char* name) 
 {
 	//根据要求计算窗口大小
 	RECT wr;
@@ -46,6 +47,8 @@ Window::Window(int width, int height, const wchar_t* name) noexcept
 	wr.top = 100;
 	wr.bottom = height + wr.top;
 	AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
+
+	//throw std::runtime_error("刘志远是奶龙");
 	//创建窗口并获取 hWnd
 	hWnd = CreateWindow(
 		LPCTSTR(WindowClass::GetName()), LPCTSTR(name),
@@ -102,4 +105,54 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		return 0;
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+//窗口的报错提示类
+Window::Exception::Exception(int line, const char* file, HRESULT hr) noexcept
+	:
+	BirdException(line, file),
+	hr(hr)
+{}
+
+const char* Window::Exception::what() const noexcept
+{
+	std::ostringstream oss;
+	oss << GetType() << std::endl
+		<< "[Error Code]" << GetErrorCode() << std::endl
+		<< "[Description]" << GetErrorString() << std::endl
+		<< GetOriginString();
+	whatBuffer = oss.str();
+	return whatBuffer.c_str();
+}
+
+const char* Window::Exception::GetType() const noexcept
+{
+	return "Birddim Window Exception";
+}
+
+std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
+{
+	char* pMsgBuf = nullptr;
+	DWORD nMsgLen = FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		reinterpret_cast<LPSTR>(&pMsgBuf), 0, nullptr
+	);
+	if (nMsgLen == 0) 
+	{
+		return "Unidentified error code";
+	}
+	std::string errorString = pMsgBuf;
+	return errorString;
+}
+
+HRESULT Window::Exception::GetErrorCode() const noexcept
+{
+	return hr;
+}
+
+std::string Window::Exception::GetErrorString() const noexcept
+{
+	return TranslateErrorCode(hr);
 }

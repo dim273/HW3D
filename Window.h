@@ -1,26 +1,40 @@
 #pragma once
 #include"BirdWin.h"
+#include"BirdExpection.h"
 
 class Window 
 {
+public:
+	class Exception : public BirdException
+	{
+	public:
+		Exception(int line, const char* file, HRESULT hr) noexcept;
+		const char* what() const noexcept override;
+		virtual const char* GetType() const noexcept;
+		static std::string TranslateErrorCode(HRESULT hr) noexcept;
+		HRESULT GetErrorCode() const noexcept;
+		std::string GetErrorString() const noexcept;
+	private:
+		HRESULT hr;
+	};
 private:
 	//单例管理的窗口类
 	class WindowClass
 	{
 	public:
-		static const wchar_t* GetName() noexcept;
+		static const char* GetName() noexcept;
 		static HINSTANCE GetInstance() noexcept;
 	private:
 		WindowClass() noexcept;
-		~WindowClass();
-		WindowClass(const WindowClass&) = delete;
+		~WindowClass();	
+		WindowClass(const WindowClass&) = delete;				//禁止掉赋值行为
 		WindowClass& operator=(const WindowClass&) = delete;
-		static constexpr const wchar_t* wndClassName = TEXT("Birddim Window");
+		static constexpr const char* wndClassName = "Birddim Window";
 		static WindowClass wndClass;
 		HINSTANCE hInst;
 	};
 public:
-	Window(int width, int height, const wchar_t* name) noexcept;
+	Window(int width, int height, const char* name);
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
@@ -33,3 +47,5 @@ private:
 	int height;
 	HWND hWnd;
 };
+
+#define CHWND_EXCEPT(hr) Window::Exception(__LINE__, __FILE__,hr)

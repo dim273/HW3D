@@ -6,18 +6,33 @@ int CALLBACK WinMain(
 	LPSTR     lpCmdLine,
 	int		  nCmdShow) 
 {
-	Window wnd(800, 300, TEXT("Mew"));
-	Window wed(500, 500, TEXT("Bird"));
-	MSG msg;
-	BOOL gResult;
-	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
+	try
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		Window wnd(600, 500, "Mew");
+		MSG msg;
+		BOOL gResult;
+		while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		if (gResult == -1)
+		{
+			return -1;
+		}
+		return msg.wParam;
 	}
-	if (gResult == -1) 
+	catch (const BirdException& e)
 	{
-		return -1;
+		MessageBox(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
 	}
-	return msg.wParam;
+	catch (const std::exception& e)
+	{
+		MessageBox(nullptr, e.what(), "´íÎó", MB_OK | MB_ICONEXCLAMATION);
+	}
+	catch (...)
+	{
+		MessageBox(nullptr, "No details available", "Î´ÖªµÄ´íÎó", MB_OK | MB_ICONEXCLAMATION);
+	}
+	return -1;
 }
