@@ -1,4 +1,5 @@
 #include"Window.h"
+#include<WinUser.h>
 
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
@@ -15,6 +16,10 @@ int CALLBACK WinMain(
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+			if (wnd.kbd.KeyIsPressed(VK_SPACE))
+				MessageBox(nullptr, "何jh变成男娘了!", "陛下，大事不好了!", MB_OK | MB_ICONEXCLAMATION);
+			if(wnd.kbd.KeyIsPressed(0x41))
+				MessageBox(nullptr, "刘zy变成奶龙了!", "陛下，大事不好了!", MB_OK | MB_ICONEXCLAMATION);
 		}
 		if (gResult == -1)
 		{

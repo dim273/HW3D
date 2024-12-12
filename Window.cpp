@@ -14,7 +14,7 @@ Window::WindowClass::WindowClass() noexcept :
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = GetInstance();
-	wc.hIcon = static_cast<HICON>(LoadImage(
+	wc.hIcon = static_cast<HICON>(LoadImage(						//设置图标
 		GetInstance(), MAKEINTRESOURCE(IDI_ICON1),
 		IMAGE_ICON, 320, 320, 0
 	));
@@ -56,6 +56,7 @@ Window::Window(int width, int height, const char* name)
 	AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
 
 	//throw std::runtime_error("刘志远是奶龙");
+	
 	//创建窗口并获取 hWnd
 	hWnd = CreateWindow(
 		LPCTSTR(WindowClass::GetName()), LPCTSTR(name),
@@ -64,6 +65,10 @@ Window::Window(int width, int height, const char* name)
 		wr.right - wr.left, wr.bottom - wr.top,
 		nullptr, nullptr, WindowClass::GetInstance(), this
 	);
+	if (hWnd == nullptr)
+	{
+		throw CHWND_LAST_EXCEPT();
+	}
 	//显示窗口
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
 }
@@ -110,6 +115,23 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	case WM_CLOSE:
 		PostQuitMessage(0);
 		return 0;
+	case WM_KILLFOCUS:
+		kbd.ClearState();	//清除输入
+		break;
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+		if (!(lParam & 0x40000000) || kbd.AutorepeatIsEnabled())
+		{
+			kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
+		}	
+		break;
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+		kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
+		break;
+	case WM_CHAR:
+		kbd.OnChar(static_cast<unsigned char>(wParam));
+		break;
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
