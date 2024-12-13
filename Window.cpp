@@ -177,7 +177,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 				ReleaseCapture();
 				mouse.OnMouseLeave();
 			}
-		}`a
+		}
 		break;
 	}
 	case WM_LBUTTONDOWN:
