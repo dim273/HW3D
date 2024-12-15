@@ -266,3 +266,19 @@ std::string Window::Exception::GetErrorString() const noexcept
 {
 	return TranslateErrorCode(hr);
 }
+
+std::optional<int> Window::ProcessMessages()
+{
+	MSG msg;
+	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+	{
+		if (msg.message == WM_QUIT)
+		{
+			return msg.wParam;
+		}
+		//TranslateMessage将传递附加的WM_CHAR的键盘输入信息
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+	return {};
+}

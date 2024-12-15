@@ -10,24 +10,14 @@ App::App()
 
 int App::Go() 
 {
-	MSG msg;
-	BOOL gResult;
-	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
+	while(1)
 	{
-		//TranslateMessage将传递附加的WM_CHAR的键盘输入信息
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-
+		if (const auto u = Window::ProcessMessages())
+		{
+			return *u;
+		}
 		DoFrame();
 	}
-
-	//检查GetMessage是否有用
-	if (gResult == -1) 
-	{
-		throw CHWND_LAST_EXCEPT();
-	}
-
-	return msg.wParam;
 }
 
 void App::DoFrame()
